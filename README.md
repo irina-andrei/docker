@@ -82,7 +82,6 @@ docker ps -a
 
 ![AltText](Images/4.png)
 
-![AltText](Images/10.png)
 
 6. If you want to stop or start the container:
 
