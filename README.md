@@ -285,14 +285,14 @@ docker run -d -p 90:80 ahskhan/tech230-nginx
 </html>
 ```
 
-![AltText](Images/home_page.png)
-
 2. Copy the 'index.html' to the 'nginx' container:
 
 ```shell
 docker cp -a index.html 63587d347825:usr/share/nginx/html
 ```
 ![AltText](Images/15.png)
+
+![AltText](Images/home_page.png)
 
 3. Create a 'Dockerfile' file and enter the edit mode:
 
