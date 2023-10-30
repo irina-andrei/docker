@@ -1,15 +1,17 @@
 # Docker
 
-### why do we need Docker? 
-Docker is a tool that helps you to run your applications inside containers, which are isolated and portable packages that contain everything your app needs to run. Other benefits:
-* Faster and easier deployment: You can build, test, and deploy your app within a Docker container without worrying about the system requirements or configuration of the target platform. You can also share your container image with anyone and they can run it with a few commands.
-* Resource efficiency: Docker containers are lightweight and use less resources than virtual machines, which run a separate operating system for each app. You can run multiple containers on the same host or server and share the resources among them.
-* Scalability and reliability: You can easily scale up or down your app by adding or removing containers as needed. Docker containers are also reliable and consistent, as they run the same way on any platform.
-* Version control and reuse: Docker containers have their own built-in mechanisms for versioning and component reuse. You can track the changes and updates of your container image and roll back to a previous version if needed. 
+### What is Docker? 
+Docker is a tool that helps you to run your applications inside containers, which are isolated and portable packages that contain everything your app needs to run. 
+
+### Benefits:
+* **Faster and easier deployment**: You can build, test, and deploy your app within a Docker container without worrying about the system requirements or configuration of the target platform. You can also share your container image with anyone and they can run it with a few commands.
+* **Resource efficiency**: Docker containers are lightweight and use less resources than virtual machines, which run a separate operating system for each app. You can run multiple containers on the same host or server and share the resources among them.
+* **Scalability and reliability**: You can easily scale up or down your app by adding or removing containers as needed. Docker containers are also reliable and consistent, as they run the same way on any platform.
+* **Version control and reuse**: Docker containers have their own built-in mechanisms for versioning and component reuse. You can track the changes and updates of your container image and roll back to a previous version if needed. 
 
 <br>
 
-### why do we need micro-services architecture?
+### Why do we need micro-services architecture?
 Rather than monolith architecture or 2-tier architecture, it works in steps.
 Before, they used to build projects in one go. But with Docker, you build something small, test it - if it works, build another small part; if that works, you merge it with the first project. And so on.
 
@@ -110,7 +112,22 @@ docker stop 63587d347825
 docker start 63587d347825
 ```
 
+You can run another image from Docker:
 
+```shell
+docker run -d -p 90:80 ahskhan/tech230-nginx
+# Changing the port to 90 since we already had something running on port 80
+```
+
+![AltText](Images/docker_run.png)
+
+
+Create Repository on Docker:
+
+![AltText](Images/creating_repo_on_docker.png)
+
+
+![AltText](Images/localhost_nginx.png)
 
 Create a new index.html:
 
@@ -149,6 +166,8 @@ Create a new index.html:
 </body>
 </html>
 ```
+
+![AltText](Images/home_page.png)
 
 <br>
 
