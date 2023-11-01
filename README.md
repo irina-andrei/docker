@@ -306,7 +306,7 @@ nano Dockerfile
 
 4. In Dockerfile, add: 
 
-```shell
+```dockerfile
 FROM nginx
 COPY index.html /usr/share/nginx/html
 ```
@@ -366,7 +366,7 @@ docker ps
 
 3. Modify the Dockerfile:
 
-```shell
+```dockerfile
 # from which image (nginx:latest is default, if you want to add other tags - nginx:v1)
 FROM nginx
 
@@ -413,7 +413,7 @@ docker push irinaandrei/irina_nginx
 
 1. Create the Dockerfile for the App:
 
-```shell
+```dockerfile
 # Use an official Node.js runtime as a base image
 FROM node:12
 
@@ -468,7 +468,7 @@ docker push irinaandrei/node-app:latest
 
 6. Create the Dockerfile for the Database in a separate folder:
 
-```shell
+```dockerfile
 # Use an official MongoDB image as a base
 FROM mongo:latest
 
