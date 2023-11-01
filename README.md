@@ -340,6 +340,87 @@ docker run -d -p 100:80 irinaandrei/first_docker_repo:latest
 
 <br>
 
+
+Steps for App and DB images:
+
+1. Login to Docker:
+
+```shell
+docker login
+```
+
+![AltText](Images/22.png)
+
+2. Make sure there are no other containers running:
+
+```shell
+docker ps
+```
+
+![AltText](Images/23.png)
+
+
+Dockerfile Nginx
+
+```shell
+# from which image (nginx:latest is default, if you want to add other tags - nginx:v1)
+FROM nginx
+
+# what to copy into the container from localhost
+COPY index.html /usr/share/nginx/html
+
+# port 80
+EXPOSE 80
+
+# CMD (command line) specific instructions
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+Dockerfile APP
+
+```shell
+# Use an official Node.js runtime as a base image
+FROM node:12
+
+# Set the working directory within the container
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json to the container
+COPY package*.json ./
+
+# Install application dependencies
+RUN npm install
+
+# Copy the rest of your application code to the container
+COPY . .
+
+# Expose the port your application will listen on
+EXPOSE 3000
+
+# Define the command to run your application
+CMD ["node", "app.js"]
+```
+
+
+![AltText](Images/25.png)
+
+Dockerfile DATABASE
+
+```shell
+# Use an official MongoDB image as a base
+FROM mongo:latest
+
+# Expose the default MongoDB port
+EXPOSE 27017
+
+# Specify the command to run MongoDB
+CMD ["mongod"]
+```
+
+![AltText](Images/24.png)
+
+<br>
+
 Sources:
 - [Install Docker on Windows](https://docs.docker.com/desktop/install/windows-install/)
 - [Docker Overview - docker.com](https://docs.docker.com/get-started/overview/)
