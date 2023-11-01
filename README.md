@@ -46,6 +46,8 @@ docker --version
 # see the Docker version
 ```
 
+![AltText](Images/26.png)
+
 ![AltText](Images/1.png)
 
 3. Create Repository on Docker (this will host our *images/micro-services* - will track previous versions, when it was pushed, how many versions available):
@@ -311,15 +313,17 @@ COPY index.html /usr/share/nginx/html
 
 ![AltText](Images/17.png)
 
-3. Build the image:
+5. Build the image:
 
 ```shell
 docker build -t irina_nginx .
+# `-t`: tag
+# `.`: this is the location; as the Dockerfile is in the current location, it's simply a dot `.`
 ```
 
 ![AltText](Images/18.png)
 
-4. Push to Docker Hub:
+6. Push to Docker Hub:
 
 ```shell
 docker tag irina_nginx irinaandrei/first_docker_repo:latest
@@ -330,7 +334,7 @@ docker push irinaandrei/first_docker_repo:latest
 
 ![AltText](Images/20.png)
 
-5. To check it has worked, you can run the command:
+7. To check it has worked, you can run the command:
 
 ```shell
 docker run -d -p 100:80 irinaandrei/first_docker_repo:latest
@@ -338,10 +342,11 @@ docker run -d -p 100:80 irinaandrei/first_docker_repo:latest
 
 ![AltText](Images/21.png)
 
+
 <br>
 
 
-Steps for App and DB images:
+# Redoing the 'nginx' image:
 
 1. Login to Docker:
 
@@ -351,7 +356,7 @@ docker login
 
 ![AltText](Images/22.png)
 
-2. Make sure there are no other containers running:
+2. We can make sure there are no other containers running:
 
 ```shell
 docker ps
@@ -359,24 +364,54 @@ docker ps
 
 ![AltText](Images/23.png)
 
-
-Dockerfile Nginx
+3. Modify the Dockerfile:
 
 ```shell
 # from which image (nginx:latest is default, if you want to add other tags - nginx:v1)
 FROM nginx
 
-# what to copy into the container from localhost
+# what to copy into the container from localhost (index.html)
 COPY index.html /usr/share/nginx/html
 
-# port 80
+# the port for nginx: 80
 EXPOSE 80
 
 # CMD (command line) specific instructions
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-Dockerfile APP
+4. Build the image:
+
+```shell
+docker build -t irinaandrei/irina_nginx .
+# this image will be immutable
+```
+
+![AltText](Images/27.png)
+
+5. Run a container:
+
+```shell
+docker run -d -p 80:80 irinaandrei/irina_nginx
+```
+
+![AltText](Images/28.png)
+
+![AltText](Images/home_page.png)
+
+6. Pushing the image to the Docker Hub:
+
+```shell
+docker push irinaandrei/irina_nginx
+```
+
+![AltText](Images/29.png)
+
+<br>
+
+## Steps for App and DB images:
+
+1. Create the Dockerfile for the App:
 
 ```shell
 # Use an official Node.js runtime as a base image
@@ -401,10 +436,37 @@ EXPOSE 3000
 CMD ["node", "app.js"]
 ```
 
+2. Go to the App and the Dockerfile location, then run the image build:
+
+```shell
+docker build -t node-app .
+```
+
+![AltText](Images/30.png)
+
+3. Run a container from the image:
+
+```shell
+docker run -d -p 3000:3000 node-app
+```
+
+![AltText](Images/31.png)
+
+4. If you go to http://localhost:3000 it will show the Sparta App:
 
 ![AltText](Images/25.png)
 
-Dockerfile DATABASE
+5. Push to Docker Hub:
+
+```shell
+docker tag node-app irinaandrei/node-app:latest
+
+docker push irinaandrei/node-app:latest
+```
+
+![AltText](Images/32.png)
+
+6. Create the Dockerfile for the Database in a separate folder:
 
 ```shell
 # Use an official MongoDB image as a base
@@ -417,7 +479,32 @@ EXPOSE 27017
 CMD ["mongod"]
 ```
 
+7. Go to that folder and run the image build:
+
+```shell
+docker build -t irinaandrei/mongodb .
+```
+![AltText](Images/33.png)
+
+8. Run a container from the image:
+
+```shell
+docker run -d -p 27017:27017 irinaandrei/mongodb
+```
+
+![AltText](Images/34.png)
+
+9. You can check it's working by going to http://localhost:27017 :
+
 ![AltText](Images/24.png)
+
+10. Push to Docker Hub:
+
+```shell
+docker push irinaandrei/mongodb:latest
+```
+
+![AltText](Images/35.png)
 
 <br>
 
