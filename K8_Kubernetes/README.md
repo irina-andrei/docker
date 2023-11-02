@@ -1,5 +1,7 @@
 # Kubernetes (K8)
 
+### Why K8?
+
 **Kubernetes** (sometimes shortened to *K8s* with the 8 standing for the number of letters between the "K" and the "s") is *an open source system to deploy, scale and manage containerized applications anywhere*.
 
 Kubernetes **automates operational tasks of container management** and includes built-in commands for deploying applications, rolling out changes to your applications, scaling your applications up and down to fit changing needs and monitoring your applications, making it easier to manage applications.
@@ -12,6 +14,14 @@ Kubernetes **automates operational tasks of container management** and includes 
 * **Infrastructure abstraction**: When you install Kubernetes, it handles the compute, networking and storage on behalf of your workloads. This allows developers to focus on applications and not worry about the underlying environment.
 
 * **Service health monitoring**: Kubernetes continuously runs health checks against your services, restarting containers that fail, or have stalled and only making available services to users when it has confirmed they are running.
+
+* **Easier application upgrades and maintenance**: Kubernetes allows you to roll out new software versions, perform health checks and revert changes with minimal downtime.
+
+* **Multi-cloud capability**: Kubernetes enables you to run your applications across multiple cloud providers without vendor lock-in or compatibility issues.
+
+<br>
+
+![AltText](Images/9.png)
 
 <br>
 
@@ -27,6 +37,75 @@ Kubernetes is a Greek word meaning 'captain' in English. Like the captain is res
 The difference between Docker and Kubernetes relates to the role each play in containerizing and running your applications:
 * Docker is *an open industry standard* for packaging and distributing applications in containers
 * Kubernetes *uses Docker* to deploy, manage and scale containerized applications
+
+
+
+<br>
+
+### When not to use K8?
+
+* Kubernetes is complex and requires a lot of expertise to set up and maintain. You need to understand the concepts and components of Kubernetes (pods, services, deployments ingress etc). You also need to deal with security, networking, monitoring, logging and troubleshooting issues.
+
+* Kubernetes is not necessary if you have a simple or monolithic application that does not need high availability, scalability or portability. Kubernetes is designed for distributed applications that have multiple services that need to communicate with each other and run on different nodes. If you have a single-page app or a small backend service that can run on a single server or a virtual machine, you might be better off using simpler tools. 
+
+
+
+<br>
+
+## Steps:
+
+1. Install K8:
+
+![AltText](Images/1.png)
+
+![AltText](Images/2.png)
+
+![AltText](Images/3.png)
+
+2. Check it works:
+
+```shell
+kubectl
+```
+![AltText](Images/4.png)
+
+```shell
+kubectl get service
+```
+
+![AltText](Images/5.png)
+
+```shell
+kubectl get svc
+```
+
+![AltText](Images/6.png)
+
+```shell
+docker ps
+```
+
+![AltText](Images/7.png)
+
+```shell
+docker images
+```
+
+![AltText](Images/8.png)
+
+
+
+* make the container scalable - 3 replicas 
+* K8 Deployment
+* 3 Pods
+(rewatch video)
+
+
+Dependencies:
+docker image of node app available on docker hub
+required ports enabled in the system
+node-deployment.yaml
+
 
 <br>
 
