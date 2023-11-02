@@ -38,7 +38,13 @@ The difference between Docker and Kubernetes relates to the role each play in co
 * Docker is *an open industry standard* for packaging and distributing applications in containers
 * Kubernetes *uses Docker* to deploy, manage and scale containerized applications
 
+<br>
 
+### K8 APIs
+
+*  
+*  
+*   
 
 <br>
 
@@ -52,17 +58,23 @@ The difference between Docker and Kubernetes relates to the role each play in co
 
 <br>
 
-## Steps:
+## Steps for installing Kubernetes:
 
-1. Install K8:
+1. Go to Docker Desktop Settings and in the General tab, make sure these boxes are ticked:
 
 ![AltText](Images/1.png)
 
 ![AltText](Images/2.png)
 
+2. In the Kubernetes tab, select 'Enable Kubernetes' and 'Show system containers':
+
 ![AltText](Images/3.png)
 
-2. Check it works:
+3. You will know it has installed when the orange box turns to green:
+
+![AltText](Images/16.png)
+
+4. Check it works:
 
 ```shell
 kubectl
@@ -77,6 +89,7 @@ kubectl get service
 
 ```shell
 kubectl get svc
+# a shorter way to 'get service' information
 ```
 
 ![AltText](Images/6.png)
@@ -94,21 +107,140 @@ docker images
 ![AltText](Images/8.png)
 
 
-
-* make the container scalable - 3 replicas 
-* K8 Deployment
-* 3 Pods
-(rewatch video)
+<br>
 
 
-Dependencies:
-docker image of node app available on docker hub
-required ports enabled in the system
-node-deployment.yaml
+## K8 Deployment:
+* Make the container scalable, using 3 replicas 
+* The K8 Deployment will use 3 Pods (K8 will create the Auto-scaling group and the Load Balancer on our behalf, which we will not be able to see)
+* We will codify K8 Deployment to launch our micro-servicces
 
+**Requirements**:
+* Docker image of node app available on Docker Hub
+* required ports enabled in the system
+* .yaml deployment files
+
+
+<br>
+
+![AltText](Images/diagram.png)
+
+We will create a **Deployment** in the *running Kubernetes Cluster* with **ReplicaSet** (a service that K8 will create in the background); the ReplicaSet will have **3 Pods** attached. They will be connected to each other using **labels** we provide.
+
+1. Write the deployment `nginx-deploy.yaml` file:
+
+```yaml
+apiVersion: apps/v1 # Which API to use for deployment
+kind: Deployment # Pod - service; what kind of service/object you want to create
+
+# What you would like to call it - name the service/object
+metadata:
+  name: nginx-deployment # Naming the deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx # Look for this label to match with K8 service
+    # Let's create a replica set of this with instances/pods
+  replicas: 3 # 3 Pods
+    # Template to use its label for K8 service to launch in the browser
+  template:
+    metadata:
+      labels:
+        app: nginx #This label connects to the service or any other K8 components
+  # Let's define the container spec
+    spec:
+      containers:
+      - name: nginx
+        image: irinaandrei/irina_nginx:latest # Use the image that you built
+        ports: 
+        - containerPort: 80 # The port to connect inside the container
+
+# You also need to create a Kubernetes nginx-service.yaml to create a K8 ServiceKube.
+```
+
+2. Tell K8 to create the Deployment using the `nginx-deploy.yaml` file:
+
+```shell
+kubectl create -f nginx-deploy.yaml
+```
+![AltText](Images/10.png)
+
+
+3. Once deployed, you will be able to see the list of the running pods (will show container IDs and Running status):
+
+```shell
+kubectl get pods
+```
+
+![AltText](Images/11.png)
+
+If one of the pods crash, it won't make a difference to the deployment, as the Load Balancer will stop the traffic, the Auto Scaling group will terminate the instance, spin up a new one and the Load balancer will redirect the traffic. 
+
+4. If you want to test that and delete a pod: 
+
+```shell
+kubectl delete pod <pod_ID>
+```
+
+![AltText](Images/17.png)
+
+A new pod (container) was created within 5 seconds.
+
+5. If you want to verify the ReplicaSet that K8 created with the Deployment:
+
+```shell
+kubectl get rs
+```
+
+![AltText](Images/12.png)
+
+
+```shell
+kubectl get svc
+```
+
+![AltText](Images/13.png)
+
+
+6. If you go to http://localhost it will not work. You need to create a Service .yaml file (`nginx-service.yaml`) in the same location, that will explose (facilitate) the Deployment to the external world by using the same labels:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx  # This should match the labels in your Nginx deployment
+  ports:
+    - protocol: TCP
+      port: 80  # Port to expose on the service
+      targetPort: 80  # Port that the Nginx pods are listening on
+  type: NodePort  # Change to LoadBalancer or ClusterIP if needed
+```
+
+7. Run the `nginx-service.yaml` file which will create the Service in the same Cluster:
+
+```shell
+kubectl create -f nginx-service.yaml
+```
+
+![AltText](Images/14.png)
+
+8. That Service has now exposed the Deployment with all the micro-services inside. If you now go to http://localhost:31230 (whatever the generated port is) it will show you your nginx Home Page:
+
+![AltText](Images/15.png)
+
+9. If you need to delete the Service: 
+
+```shell
+kubectl delete -f nginx-service.yaml
+```
+![AltText](Images/18.png)
 
 <br>
 
 Sources:
 
-- [What is Kubernetes](https://cloud.google.com/learn/what-is-kubernetes)
+- [What is Kubernetes - cloud.google.com](https://cloud.google.com/learn/what-is-kubernetes)
+- [Kubernetes Service - kubernetes.io](https://kubernetes.io/docs/concepts/services-networking/service/)
