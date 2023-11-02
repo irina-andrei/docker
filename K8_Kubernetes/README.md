@@ -42,9 +42,21 @@ The difference between Docker and Kubernetes relates to the role each play in co
 
 ### K8 APIs
 
-*  
-*  
-*   
+The Kubernetes API is **a resource-based (RESTful) programmatic interface** provided via HTTP. It supports *retrieving, creating, updating and deleting primary resources* via the standard HTTP verbs (POST, PUT, PATCH, DELETE, GET). A resource is an object that represents a piece of the cluster such as *a pod, a service or a node*. Each resource has a unique name and an associated type, group and version. 
+
+The Kubernetes API is **the fundamental fabric of Kubernetes**. All operations and communications between components and external user commands are REST API calls that the API Server handles. Consequently, **everything in the Kubernetes platform is treated as an API object** and has *a corresponding entry in the API*. The Kubernetes API also provides mechanisms for controlling access, managing resources quotas and limits, enforcing policies and monitoring the cluster state.
+
+<br>
+
+### K8 Volumes:
+* **EV - Ephemeral Volume** = volumes that do not store data persistently and are deleted when the pod is terminated. Ephemeral volumes are useful for temporary data such as caches, logs or secrets. 
+* **PV - Persistent Volume** = volumes that store data persistently across restarts and are abstracted from the underlying storage provider by an API. 
+* *PVC - Persistent Volume Claim* = a way for a Pod to request and use a **Persistent Volume** (PV) in Kubernetes. 
+
+
+Documentation:
+- [Kubernetes Volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
+- [Amazon - Persistent storage K8](https://aws.amazon.com/blogs/storage/persistent-storage-for-kubernetes/)
 
 <br>
 
@@ -113,7 +125,8 @@ docker images
 ## K8 Deployment:
 * Make the container scalable, using 3 replicas 
 * The K8 Deployment will use 3 Pods (K8 will create the Auto-scaling group and the Load Balancer on our behalf, which we will not be able to see)
-* We will codify K8 Deployment to launch our micro-servicces
+* We will codify K8 Deployment to launch our micro-services
+* **nodePort**: this is a port in the range of 30000-32767 that will be open in each node. If left empty, Kubernetes selects a free one in that range. protocol: TCP is the default one, but you can use others like SCTP or UDP.
 
 **Requirements**:
 * Docker image of node app available on Docker Hub
@@ -123,9 +136,13 @@ docker images
 
 <br>
 
-![AltText](Images/diagram.png)
+## Our Kubernetes Cluster
 
-We will create a **Deployment** in the *running Kubernetes Cluster* with **ReplicaSet** (a service that K8 will create in the background); the ReplicaSet will have **3 Pods** attached. They will be connected to each other using **labels** we provide.
+![AltText](Images/diagram3.png)
+
+We will create a **Deployment** in the *running Kubernetes Cluster* with **ReplicaSet** (a service that K8 will create in the background); the ReplicaSet will have **3 Pods** attached. They will be connected to each other using the **labels** we provide.
+
+Steps:
 
 1. Write the deployment `nginx-deploy.yaml` file:
 
@@ -240,7 +257,123 @@ kubectl delete -f nginx-service.yaml
 
 <br>
 
+
+### If you want to increase (or decrease) the Pods number:
+
+```shell
+kubectl get deploy
+# get the name of the deployment
+```
+![AltText](Images/19.png)
+
+Edit the deployment to scale down (or up):
+
+```shell
+kubectl edit deploy nginx-deployment
+```
+
+![AltText](Images/21.png)
+
+This will open the editor, you can change from 3 to 2:
+![AltText](Images/20.png)
+
+```shell
+kubectl get pods
+# There will be 2 pods now
+```
+
+![AltText](Images/22.png)
+
+<br>
+
+### Deploying the App Image in the same Cluster:
+
+1. Write the deployment `app-deploy.yaml` file:
+
+```yaml
+apiVersion: apps/v1 # Which API to use for deployment
+kind: Deployment # Pod - service; what kind of service/object you want to create
+
+# What you would like to call it - name the service/object
+metadata:
+  name: app-deployment # Naming the deployment
+spec:
+  selector:
+    matchLabels:
+      app: app # Look for this label to match with K8 service
+    # Let's create a replica set of this with instances/pods
+  replicas: 3 # 3 Pods
+    # Template to use its label for K8 service to launch in the browser
+  template:
+    metadata:
+      labels:
+        app: app #This label connects to the service or any other K8 components
+  # Let's define the container spec
+    spec:
+      containers:
+      - name: app
+        image: irinaandrei/node-app:latest # Use the image that you built
+        ports: 
+        - containerPort: 3000 # The port to connect inside the container
+
+# Create a Kubernetes app-service.yaml to create a K8 ServiceKube.
+```
+
+2. Tell K8 to create the Deployment using the `app-deploy.yaml` file:
+
+```shell
+kubectl create -f app-deploy.yaml
+```
+![AltText](Images/24.png)
+
+3. Once deployed, you will be able to see the list of the running pods (will show container IDs and Running status):
+
+```shell
+kubectl get pods
+```
+
+![AltText](Images/25.png)
+
+4. You now need to create a Service .yaml file (`app-service.yaml`) in the same location, that will explose (facilitate) the Deployment to the external world by using the same labels:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+spec:
+  selector:
+    app: app  # This should match the labels in your app deployment
+  ports:
+    - protocol: TCP
+      port: 80  # Port to expose on the service
+      targetPort: 3000  # Port that the app pods are listening on
+  type: LoadBalancer  # Change to NodePort or ClusterIP if needed
+```
+
+5. Run the `app-service.yaml` file which will create the Service in the same Cluster:
+
+```shell
+kubectl create -f app-service.yaml
+```
+
+```shell
+kubectl get deploy
+# See all deployments
+```
+
+![AltText](Images/26.png)
+
+6. If you go to http://localhost you will be able to see the App:
+
+![AltText](Images/23.png)
+
+<br>
+
 Sources:
 
 - [What is Kubernetes - cloud.google.com](https://cloud.google.com/learn/what-is-kubernetes)
 - [Kubernetes Service - kubernetes.io](https://kubernetes.io/docs/concepts/services-networking/service/)
+- [Kubernetes Volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
+- [Amazon - Persistent storage K8](https://aws.amazon.com/blogs/storage/persistent-storage-for-kubernetes/)
+- [Docker vs VM](https://k21academy.com/docker-kubernetes/docker-vs-virtual-machine/)
