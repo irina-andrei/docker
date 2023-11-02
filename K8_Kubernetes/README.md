@@ -219,7 +219,7 @@ kubectl get svc
 ![AltText](Images/13.png)
 
 
-6. If you go to http://localhost it will not work. You need to create a Service .yaml file (`nginx-service.yaml`) in the same location, that will explose (facilitate) the Deployment to the external world by using the same labels:
+6. If you go to http://localhost it will not work. You need to create a Service .yaml file (`nginx-service.yaml`) in the same location, that will expose (facilitate) the Deployment to the external world by using the same labels:
 
 ```yaml
 apiVersion: v1
@@ -334,7 +334,7 @@ kubectl get pods
 
 ![AltText](Images/25.png)
 
-4. You now need to create a Service .yaml file (`app-service.yaml`) in the same location, that will explose (facilitate) the Deployment to the external world by using the same labels:
+4. You now need to create a Service .yaml file (`app-service.yaml`) in the same location, that will expose (facilitate) the Deployment to the external world by using the same labels:
 
 ```yaml
 apiVersion: v1
